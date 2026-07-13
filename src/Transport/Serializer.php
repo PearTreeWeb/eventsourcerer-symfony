@@ -1,0 +1,54 @@
+<?php
+
+declare(strict_types=1);
+
+namespace PearTreeWeb\EventSourcerer\SymfonyClient\Transport;
+
+use EventSourcerer\SymfonyClient\ProcessEvent;
+use PearTreeWeb\EventSourcerer\Common\Model\Checkpoint;
+use PearTreeWeb\EventSourcerer\Common\Model\Event;
+use PearTreeWeb\EventSourcerer\Common\Model\EventName;
+use PearTreeWeb\EventSourcerer\Common\Model\EventVersion;
+use PearTreeWeb\EventSourcerer\Common\Model\StreamId;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\Stamp\TransportMessageIdStamp;
+use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
+
+final class Serializer implements SerializerInterface
+{
+    /**
+     * @param array{allSequence: int, number: int, eventVersion: int, name: string, number: int, payload: array<string, string>, stream: string, occurred: string, catchupRequestStream: string} $encodedEnvelope
+     */
+    public function decode(array $encodedEnvelope): Envelope
+    {
+        $catchupRequestStream = $encodedEnvelope['catchupRequestStream'] ?? '*';
+
+        return new Envelope(
+            new ProcessEvent(
+                new Event(
+                    Checkpoint::fromInt($encodedEnvelope['allSequence']),
+                    Checkpoint::fromInt($encodedEnvelope['number']),
+                    EventVersion::fromInt($encodedEnvelope['eventVersion']),
+                    EventName::fromString($encodedEnvelope['name']),
+                    $encodedEnvelope['payload'],
+                    StreamId::fromString($encodedEnvelope['stream']),
+                    new \DateTimeImmutable($encodedEnvelope['occurred']),
+                    StreamId::fromString($catchupRequestStream)
+                )
+            ),
+            [
+                new TransportMessageIdStamp(self::messageId($encodedEnvelope['allSequence'])),
+            ]
+        );
+    }
+
+    private static function messageId(int $allSequence): string
+    {
+        return 'message-' . $allSequence;
+    }
+
+    public function encode(Envelope $envelope): array
+    {
+        // TODO: Implement encode() method.
+    }
+}

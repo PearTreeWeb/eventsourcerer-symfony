@@ -1,22 +1,36 @@
 {
-    "name": "pear-tree-web-ltd/event-sourcerer-symfony-messenger-transport",
-    "description": "A transport to be used with Symfony Messenger to retrieve events from EventSourcerer",
+    "name": "eventsourcerer/symfony-client",
+    "description": "Symfony client for EventSourcerer",
     "type": "library",
     "autoload": {
         "psr-4": {
-            "PearTreeWebLtd\\EventSourcererSymfonyMessengerTransport\\": "src/"
+            "PearTreeWeb\\EventSourcerer\\SymfonyClient\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PearTreeWeb\\EventSourcerer\\SymfonyClient\\Tests\\": "tests/"
         }
     },
     "authors": [
         {
-            "name": "michaelbudd",
-            "email": "michaelbudd6@gmail.com"
+            "name": "Pear Tree Web Ltd",
+            "email": "contact@peartreeweb.com"
         }
     ],
     "require-dev": {
-        "phpunit/phpunit": "^12.0"
+        "phpunit/phpunit": "^12.0",
+        "symfony/http-kernel": "8.0.*"
     },
     "require": {
-        "symfony/messenger": "^7.2"
-    }
+        "php": ">=8.5",
+        "symfony/dependency-injection": "8.0.*",
+        "symfony/messenger": "8.0.*",
+        "symfony/http-client": "8.0.*",
+        "eventsourcerer/event-sourcerer-client": "dev-main",
+        "symfony/console": "8.0.*",
+        "symfony/process": "8.0.*",
+        "eventsourcerer/common": "dev-main"
+    },
+    "minimum-stability": "dev"
 }
